@@ -25,7 +25,7 @@ class Kalturastream implements RendererInterface
         if (isset($Streamdata['url'])) {
             $options['url'] = $Streamdata['url'];
         }
-        if (isset($Streamdata['partner_Id'])) {
+        if (isset($Streamdata['partner_id'])) {
             $options['partner_id'] = $Streamdata['partner_id'];
 			}else{
 			$options['partner_id'] = self::PARTNER;

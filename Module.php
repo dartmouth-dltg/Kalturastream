@@ -6,6 +6,7 @@ use Omeka\Module\AbstractModule;
 use Zend\Mvc\Controller\AbstractController;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Renderer\PhpRenderer;
+use Kalturastream\Form\ConfigForm;
 
 class Module extends AbstractModule
 {
@@ -20,7 +21,17 @@ class Module extends AbstractModule
         $settings->delete('Videostream_directory');
         $settings->delete('Videostream_delete_file');
     }
-
+  public function getConfigForm(PhpRenderer $renderer)
+  {
+    $settings = $this->getServiceLocator()->get('Omeka\Settings');
+    $form = new ConfigForm;
+    $form->init();
+    $form->setData([
+      'kaltura_partner_id' => $settings->get('Kalturastream_partner_id'),
+      'kaltura_uiconf_id' => $settings->get('Kalturastream_uiconf_id'),
+    ]);
+    return $renderer->formCollection($form, false);
+  }
     public function handleConfigForm(AbstractController $controller)
     {
         $settings = $this->getServiceLocator()->get('Omeka\Settings');
@@ -32,8 +43,8 @@ class Module extends AbstractModule
             return false;
         }
         $formData = $form->getData();
-        $settings->set('Kalturastream_directory', $formData['directory']);
-        $settings->set('Kalturastream_delete_file', $formData['delete_file']);
+        $settings->set('Kalturastream_partner_id', $formData['kaltura_partner_id']);
+        $settings->set('Kalturastream_uiconf_id', $formData['kaltura_uiconf_id']);
         return true;
     }
 }
