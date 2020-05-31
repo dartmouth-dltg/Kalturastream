@@ -15,8 +15,8 @@ return [
   ],
   'kalturastream' => [
     'config' => [
-      'kaltura_partner_id' => '23',
-      'kaltura_uiconf_id' => '17',
+      'kaltura_partner_id' => '',
+      'kaltura_uiconf_id' => '',
 
     ],
   ],

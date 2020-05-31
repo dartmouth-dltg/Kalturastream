@@ -2,20 +2,19 @@
 
 namespace Kalturastream\Media\Ingester;
 
+use Omeka\Api\Representation\MediaRepresentation;
 use Omeka\Api\Request;
 use Omeka\Entity\Media;
 use Omeka\File\Downloader;
-use Omeka\Media\Ingester\IngesterInterface;
+use Omeka\Media\Ingester\MutableIngesterInterface;
 use Omeka\Settings\Settings;
 use Omeka\Stdlib\ErrorStore;
+use Zend\Form\Element\Checkbox;
 use Zend\Form\Element\Text;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Renderer\PhpRenderer;
 
-class Kalturastream implements IngesterInterface {
-  /**
-   * @var FileManager
-   */
+class Kalturastream implements MutableIngesterInterface {
+
   protected $downloader;
   protected $settings;
 
@@ -23,6 +22,18 @@ class Kalturastream implements IngesterInterface {
     $this->downloader = $downloader;
     $this->settings = $settings;
   }
+
+  public function update(Media $media, Request $request, ErrorStore $errorStore) {
+    $data = $request->getContent();
+    $values = \array_filter($data['o:media']['__index__']);
+    $media->setData($values);
+  }
+
+  public function updateForm(PhpRenderer $view, MediaRepresentation $media, array $options = []) {
+    $data = $media->mediaData();
+    return $this->form($view, $data);
+  }
+
 
   public function getLabel() {
     return 'KalturaStream'; // @translate
@@ -65,7 +76,7 @@ class Kalturastream implements IngesterInterface {
     if (is_numeric($height)) {
       $mediaData['height'] = $height;
     }
-    $mediaData['url'] = $data['o:source'];
+    $mediaData['o:source'] = $data['o:source'];
     $media->setData($mediaData);
   }
 
@@ -73,13 +84,15 @@ class Kalturastream implements IngesterInterface {
    * {@inheritDoc}
    */
   public function form(PhpRenderer $view, array $options = []) {
-    $partnerID = $this->settings->get('Kalturastream_partner_id');
-    $uiconf = $this->settings->get('Kalturastream_uiconf_id');
+
+    $partnerID = isset($options['partner_id']) ? $options['partner_id'] : $this->settings->get('Kalturastream_partner_id');
+    $uiconf = isset($options['uiconf']) ? $options['uiconf'] : $this->settings->get('Kalturastream_uiconf_id');
     $idInput = new Text('o:media[__index__][o:source]');
     $idInput->setOptions([
       'label' => 'Video ID', // @translate
-      'info' => 'ID for the video to embed, y\'all.', // @translate
+      'info' => 'ID for the video to embed.', // @translate
     ]);
+    $idInput->setValue($options['o:source']);
     $idInput->setAttributes([
       'id' => 'media-kalturastream-source-__index__',
       'required' => true,
@@ -116,6 +129,7 @@ class Kalturastream implements IngesterInterface {
       'id' => 'media-kalturastream-source-__index__',
       'required' => false
     ]);
+    $startInput->setValue($options['start']);
     $endInput = new Text('o:media[__index__][end]');
     $endInput->setOptions([
       'label' => 'End Time', // @translate
@@ -125,22 +139,35 @@ class Kalturastream implements IngesterInterface {
       'id' => 'media-kalturastream-source-__index__',
       'required' => false
     ]);
+    $endInput->setValue($options['end']);
     $widthInput = new Text('o:media[__index__][width]');
     $widthInput->setOptions([
       'label' => 'Width', // @translate
       'info' => 'Width of video display as recommended in Kaltura', // @translate
     ]);
+    $widthInput->setValue(($options['width']));
     $heightInput = new Text('o:media[__index__][height]');
     $heightInput->setOptions([
       'label' => 'Height', // @translate
       'info' => 'Height of video display as recommended in Kaltura.', // @translate
     ]);
+    $heightInput->setValue($options['height']);
+
+    $autoplayInput = new Checkbox('o:media[__index__][autoplay]');
+    $autoplayInput->setOptions([
+      'label' => 'Autoplay', // @translate
+      'info' => 'Begin Video play on load?',
+      'checked_value' => 'autoplay',
+      'unchecked_value' => ''// @translate
+    ]);
+    $autoplayInput->setValue($options['autoplay']);
     return $view->formRow($idInput)
       . $view->formRow($partnerInput)
       . $view->formRow($uiconfInput)
       . $view->formRow($startInput)
       . $view->formRow($endInput)
       . $view->formRow($widthInput)
-      . $view->formRow($heightInput);
+      . $view->formRow($heightInput)
+      . $view->formRow($autoplayInput);
   }
 }
