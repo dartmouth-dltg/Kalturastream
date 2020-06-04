@@ -129,7 +129,10 @@ class Kalturastream implements MutableIngesterInterface {
       'id' => 'media-kalturastream-source-__index__',
       'required' => false
     ]);
-    $startInput->setValue($options['start']);
+    if (isset($options['start'])) {
+      $startInput->setValue($options['start']);
+    }
+
     $endInput = new Text('o:media[__index__][end]');
     $endInput->setOptions([
       'label' => 'End Time', // @translate
@@ -139,19 +142,27 @@ class Kalturastream implements MutableIngesterInterface {
       'id' => 'media-kalturastream-source-__index__',
       'required' => false
     ]);
-    $endInput->setValue($options['end']);
+    if (isset($options['end'])) {
+      $endInput->setValue($options['end']);
+    }
+
     $widthInput = new Text('o:media[__index__][width]');
     $widthInput->setOptions([
       'label' => 'Width', // @translate
       'info' => 'Width of video display as recommended in Kaltura', // @translate
     ]);
-    $widthInput->setValue(($options['width']));
+    if (isset($options['width'])) {
+      $widthInput->setValue(($options['width']));
+    }
+
     $heightInput = new Text('o:media[__index__][height]');
     $heightInput->setOptions([
       'label' => 'Height', // @translate
       'info' => 'Height of video display as recommended in Kaltura.', // @translate
     ]);
-    $heightInput->setValue($options['height']);
+    if (isset($options['width'])) {
+      $heightInput->setValue($options['width']);
+    }
 
     $autoplayInput = new Checkbox('o:media[__index__][autoplay]');
     $autoplayInput->setOptions([
@@ -160,7 +171,9 @@ class Kalturastream implements MutableIngesterInterface {
       'checked_value' => 'autoplay',
       'unchecked_value' => ''// @translate
     ]);
-    $autoplayInput->setValue($options['autoplay']);
+    if (isset($options['autoplay'])) {
+      $autoplayInput->setValue($options['autoplay']);
+    }
     return $view->formRow($idInput)
       . $view->formRow($partnerInput)
       . $view->formRow($uiconfInput)
