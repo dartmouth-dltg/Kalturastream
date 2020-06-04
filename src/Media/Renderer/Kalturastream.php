@@ -7,8 +7,8 @@ use Omeka\Media\Renderer\RendererInterface;
 use Zend\View\Renderer\PhpRenderer;
 
 class Kalturastream implements RendererInterface {
-  const WIDTH = 799;
-  const HEIGHT = 449;
+  const WIDTH = 799; // Deprecated
+  const HEIGHT = 449; // Deprecated
   const ALLOWFULLSCREEN = true;
   const AUTOPLAY = "";
   const CONTROLS = "controls";
@@ -47,7 +47,7 @@ class Kalturastream implements RendererInterface {
     if (isset($Streamdata['width'])) {
       $options['width'] = $Streamdata['width'];
     } else {
-      $options['width'] = $media->value('ebuc:width', ['default' => $item->value('ebuc:width', ['default' => self::WIDTH])]);
+      $options['width'] = $media->value('ebuc:width', ['default' => $item->value('ebuc:width', ['default' => ''])]);
     }
     if (isset($Streamdata['height'])) {
       $options['height'] = $Streamdata['height'];
@@ -69,20 +69,38 @@ class Kalturastream implements RendererInterface {
       $options['controls'] = self::CONTROLS;
     }
 
-    $view->headScript()->appendFile($view->assetUrl('js/utils/pfUtils.js', 'Omeka'));
-    $video =
-      sprintf(
-        '<div id="vid_player%s" style="width:%spx; height:%spx" itemprop="video" itemscope itemtype="http://schema.org/VideoObject"><span itemprop="duration" content="120"></span></div>
-			<div class="debug">Playback: <span id="pos-%s"> 0:00:00 </span> - <span id="finalend-%s"> 0:00:00 </span></div>
-			<script>jQuery(".debug").hide();</script>	',
-        $options['start'],
-        $options['width'],
-        $options['height'],
-        $options['start'],
-        $options['end']
-      );
-    $video = $video .
-      sprintf('<script src="https://cdnapisec.kaltura.com/p/%s/sp/%s00/embedIframeJs/uiconf_id/%s/partner_id/%s"></script>
+    $view->headScript()->appendFile($view->assetUrl('js/pfUtils.js','Kalturastream'));
+    
+    if (!empty($options['width'])) {
+      $video =
+        sprintf(
+          '<div id="vid_player%s" style="width:%spx; height:%spx" itemprop="video" itemscope itemtype="http://schema.org/VideoObject"><span itemprop="duration" content="120"></span></div>
+  			<div class="debug">Playback: <span id="pos-%s"> 0:00:00 </span> - <span id="finalend-%s"> 0:00:00 </span></div>
+  			<script>jQuery(".debug").hide();</script>	',
+          $options['start'],
+          $options['width'],
+          $options['height'],
+          $options['start'],
+          $options['end']
+        );
+    } else {
+      // Create a responsive container
+      $video =
+        sprintf(
+          '<div style="width:100%%; position:relative; display: inline-block;">
+              <div style="margin-top: 56.25%%;"></div>
+              <div id="vid_player%s" style="position:absolute; top:0; left:0; right: 0; bottom: 0;" itemprop="video" itemscope itemtype="http://schema.org/VideoObject"><span itemprop="duration" content="120"></span></div>
+          </div>
+  			<div class="debug">Playback: <span id="pos-%s"> 0:00:00 </span> - <span id="finalend-%s"> 0:00:00 </span></div>
+  			<script>jQuery(".debug").hide();</script>	',
+          $options['start'],
+          $options['width'],
+          $options['height'],
+          $options['start'],
+          $options['end']
+        );
+    }
+    $video .= sprintf('<script src="https://cdnapisec.kaltura.com/p/%s/sp/%s00/embedIframeJs/uiconf_id/%s/partner_id/%s"></script>
 			<script>
 		  	kWidget.embed({
 			 	"targetId": "vid_player%s",
