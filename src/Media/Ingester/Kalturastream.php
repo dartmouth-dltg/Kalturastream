@@ -87,6 +87,8 @@ class Kalturastream implements MutableIngesterInterface {
 
     $partnerID = isset($options['partner_id']) ? $options['partner_id'] : $this->settings->get('Kalturastream_partner_id');
     $uiconf = isset($options['uiconf']) ? $options['uiconf'] : $this->settings->get('Kalturastream_uiconf_id');
+    $mime = isset($options['mimr']) ? $options['mime'] : 'application/octet-stream';
+
     $idInput = new Text('o:media[__index__][o:source]');
     $idInput->setOptions([
       'label' => 'Video ID', // @translate
@@ -97,6 +99,17 @@ class Kalturastream implements MutableIngesterInterface {
       'id' => 'media-kalturastream-source-__index__',
       'required' => true,
     ]);
+
+    $mimeInput = new Text('o:media[__index__][mime]');
+    $mimeInput->setOptions([
+      'label' => 'Mime Type', // @translate
+      'info' => 'mimetype of video segment', // @translate
+    ]);
+    $mimeInput->setAttributes([
+      'id' => 'media-kalturastream-source-__index__',
+      'required' => false
+    ]);
+    $mimeInput->setValue($mime);
 
     $partnerInput = new Text('o:media[__index__][partner_id]');
     $partnerInput->setOptions([
@@ -109,6 +122,7 @@ class Kalturastream implements MutableIngesterInterface {
       'id' => 'media-kalturastream-source-__index__',
       'required' => true
     ]);
+
     $uiconfInput = new Text('o:media[__index__][uiconf]');
     $uiconfInput->setOptions([
       'label' => 'Kaltura UIconf ID', // @translate
@@ -175,6 +189,7 @@ class Kalturastream implements MutableIngesterInterface {
       $autoplayInput->setValue($options['autoplay']);
     }
     return $view->formRow($idInput)
+      . $view->formRow($mimeInput)
       . $view->formRow($partnerInput)
       . $view->formRow($uiconfInput)
       . $view->formRow($startInput)
