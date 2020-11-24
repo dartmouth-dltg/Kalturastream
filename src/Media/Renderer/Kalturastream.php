@@ -13,7 +13,7 @@ class Kalturastream implements RendererInterface {
   const AUTOPLAY = "";
   const CONTROLS = "controls";
   const START = 0;
-  const END = 18;
+  const END = 72000; // 20 hours as temp fix for end issue
   const PARTNER = "1751071";
   const UICONF = "26683571";
 
