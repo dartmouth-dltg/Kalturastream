@@ -9,9 +9,9 @@ use Omeka\File\Downloader;
 use Omeka\Media\Ingester\MutableIngesterInterface;
 use Omeka\Settings\Settings;
 use Omeka\Stdlib\ErrorStore;
-use Zend\Form\Element\Checkbox;
-use Zend\Form\Element\Text;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\Form\Element\Checkbox;
+use Laminas\Form\Element\Text;
+use Laminas\View\Renderer\PhpRenderer;
 
 class Kalturastream implements MutableIngesterInterface {
 
