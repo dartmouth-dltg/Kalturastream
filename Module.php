@@ -3,9 +3,9 @@ namespace Kalturastream;
 
 //use Videostream\Form\ConfigForm;
 use Omeka\Module\AbstractModule;
-use Zend\Mvc\Controller\AbstractController;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\Mvc\Controller\AbstractController;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\View\Renderer\PhpRenderer;
 use Kalturastream\Form\ConfigForm;
 
 class Module extends AbstractModule

@@ -4,7 +4,7 @@ namespace Kalturastream\Service;
 
 use Interop\Container\ContainerInterface;
 use Kalturastream\Media\Ingester\Kalturastream;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class MediaIngesterKalturastreamFactory implements FactoryInterface {
   /**
